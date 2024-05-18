@@ -3,7 +3,6 @@ package nl.neliz.cosmiclauncher.util;
 import java.io.File;
 
 public class OSHelper {
-
     public static String getBasicPath() {
         String osName = System.getProperty("os.name").toLowerCase();
         String basicPath;

@@ -5,18 +5,24 @@ import nl.neliz.cosmiclauncher.Main;
 import javax.swing.*;
 
 public class OutputGUI {
-
     private JTextArea textArea;
 
-    public OutputGUI()  {
+    public OutputGUI() {
         initialize();
     }
 
     private void initialize() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         JFrame frame = new JFrame();
 
         frame.setTitle("Cosmic Reach game output");
         frame.setIconImage(Main.icon);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(600, 400);
         frame.setLocationRelativeTo(null);
 

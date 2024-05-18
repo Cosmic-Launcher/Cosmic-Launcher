@@ -6,30 +6,40 @@ import nl.neliz.cosmiclauncher.util.VersionHandler;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
+import java.io.File;
 
 public class LauncherGUI {
     private JComboBox<String> gameVersionComboBox;
     private static JButton buttonInstall;
+    private static JFrame frame;
     private JPanel panel;
 
-    public LauncherGUI() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public LauncherGUI() {
         initialize();
     }
 
-    private void initialize() throws UnsupportedLookAndFeelException, ClassNotFoundException, InstantiationException, IllegalAccessException {
-        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+    private void initialize() {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        JFrame frame = new JFrame();
-        JPanel panel =  this.setPanel();
+        frame = new JFrame();
+        panel = this.setPanel();
 
         frame.setTitle("Cosmic Launcher");
         frame.setIconImage(Main.icon);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setResizable(false);
         frame.setSize(400, 100);
         frame.setLocationRelativeTo(null);
         frame.add(panel);
         frame.setVisible(true);
+    }
+
+    public static void dispose() {
+        frame.dispose();
     }
 
     public JPanel setPanel() {
@@ -45,6 +55,7 @@ public class LauncherGUI {
                 createSpacer()
         );
 
+        gameVersionComboBox.setFocusable(false);
         for(VersionHandler.GameVersion version : VersionHandler.versions) {
             gameVersionComboBox.addItem(version.getVersion());
         }
@@ -53,6 +64,7 @@ public class LauncherGUI {
                 buttonInstall = new JButton("Launch")
         );
 
+        buttonInstall.setFocusable(false);
         buttonInstall.addActionListener(e -> {
             launch();
         });
@@ -110,8 +122,8 @@ public class LauncherGUI {
         if(gameVersion == null) return;
 
         new Thread(() -> {
-            VersionHandler.downloadClient(gameVersion.getUrl(), gameVersion.getVersion());
-            Main.launch(gameVersion.getVersion());
+            VersionHandler.downloadFile(gameVersion.getUrl(), Main.versionsDirectory + File.separator + gameVersion.getVersion() + File.separator + "client.jar");
+            Main.launch(Main.versionsDirectory + File.separator + gameVersion.getVersion() + File.separator + "client.jar");
         }).start();
     }
 }

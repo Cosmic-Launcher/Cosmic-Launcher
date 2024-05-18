@@ -3,15 +3,15 @@ package nl.neliz.cosmiclauncher.util;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import nl.neliz.cosmiclauncher.Main;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import static nl.neliz.cosmiclauncher.Settings.*;
 
 public class VersionHandler {
     public static List<GameVersion> versions = new ArrayList<>();
@@ -23,6 +23,7 @@ public class VersionHandler {
 
     public static class GameVersion {
         String version;
+        String type;
         String url;
 
         public GameVersion(String version, String url) {
@@ -35,6 +36,10 @@ public class VersionHandler {
             return version;
         }
 
+        public String getType() {
+            return type;
+        }
+
         public String getUrl() {
             return url;
         }
@@ -42,14 +47,25 @@ public class VersionHandler {
 
     public static void loadVersionsFromFile() {
         try {
+            String url = "https://github.com/n3liz/Cosmic-Launcher/raw/main/versions.json";
             String filePath = Main.versionsDirectory + File.separator + "versions.json";
+
+            downloadFile(new URL(url), new File(filePath));
+
             File file = new File(filePath);
-
-            downloadVersionsJson(filePath);
-
             FileReader reader = new FileReader(file);
             Type listType = new TypeToken<List<GameVersion>>() {}.getType();
-            versions = new Gson().fromJson(reader, listType);
+            List<GameVersion> allVersions = new Gson().fromJson(reader, listType);
+
+            if (showSnapshots) {
+                versions.addAll(allVersions);
+            } else {
+                for (GameVersion version : allVersions) {
+                    if ("release".equalsIgnoreCase(version.getType())) {
+                        versions.add(version);
+                    }
+                }
+            }
 
             if (!versions.isEmpty()) latest = versions.get(versions.size() - 1);
         } catch (IOException e) {
@@ -65,21 +81,31 @@ public class VersionHandler {
         return null;
     }
 
-    public static void downloadVersionsJson(String path) {
-        String url = "https://github.com/n3liz/Cosmic-Launcher/raw/main/versions.json";
-
+    public static void downloadFile(String url, String filePath) {
         try {
-            FileUtils.copyURLToFile(new URL(url), new File(path));
+            downloadFile(new URL(url), new File(filePath));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void downloadClient(String url, String path) {
-        String savePath = Main.versionsDirectory + File.separator + path + File.separator + "client.jar";
-
+    public static void downloadFile(URL url, File filePath) {
         try {
-            FileUtils.copyURLToFile(new URL(url), new File(savePath));
+            URLConnection connection = url.openConnection();
+
+            File parentDir = filePath.getParentFile();
+            if (!parentDir.exists()) {
+                parentDir.mkdirs();
+            }
+
+            try (InputStream inputStream = connection.getInputStream();
+                 BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath))) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
