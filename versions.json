@@ -1,5 +1,11 @@
 [
   {
+    "version": "pre-alpha 0.1.39",
+    "type": "release",
+    "url": "https://github.com/n3liz/Cosmic-Archive/raw/main/Cosmic%20Reach-0.1.39.jar",
+    "hash": "63b83d378eb011be0b42db19ddd6e265415e29dd33680d80b8481c9651379e86"
+  },
+  {
     "version": "pre-alpha 0.1.38",
     "type": "release",
     "url": "https://github.com/n3liz/Cosmic-Archive/raw/main/Cosmic%20Reach-0.1.38.jar",
