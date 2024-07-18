@@ -3,6 +3,8 @@ package nl.neliz.cosmiclauncher.ui;
 import nl.neliz.cosmiclauncher.Main;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 
 public class OutputGUI {
     private JTextArea textArea;
@@ -30,7 +32,17 @@ public class OutputGUI {
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
 
-        frame.add(scrollPane);
+        JButton copyButton = new JButton("Copy log to clipboard");
+        copyButton.setFocusable(false);
+        copyButton.setPreferredSize(new Dimension(600, 25));
+        copyButton.addActionListener(e -> {
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(textArea.getText()), null);
+        });
+
+        frame.setLayout(new BorderLayout());
+        frame.add(scrollPane, BorderLayout.CENTER);
+        frame.add(copyButton, BorderLayout.SOUTH);
+
         frame.setVisible(true);
     }
 

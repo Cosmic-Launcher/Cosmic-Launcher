@@ -1,5 +1,6 @@
 package nl.neliz.cosmiclauncher;
 
+import nl.neliz.cosmiclauncher.ui.menu.PlayMenu;
 import nl.neliz.cosmiclauncher.ui.LauncherGUI;
 import nl.neliz.cosmiclauncher.ui.OutputGUI;
 import nl.neliz.cosmiclauncher.util.OSHelper;
@@ -7,7 +8,6 @@ import nl.neliz.cosmiclauncher.util.OSHelper;
 import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 
 import static nl.neliz.cosmiclauncher.Settings.*;
@@ -19,7 +19,7 @@ public class Main {
     public static final String logsDirectory = launcherDirectory + File.separator + "logs";
 
     public static void main(String[] args) {
-        Settings.load(launcherDirectory + File.separator + "settings.json");
+        Settings.load(launcherDirectory + File.separator + "launcherSettings.json");
         new LauncherGUI();
     }
 
@@ -36,11 +36,18 @@ public class Main {
             File logFile = new File(logsDirectory, logFileName);
 
             String[] jvmArgs = jvmArguments.split("\\s+");
+            String[] command = new String[jvmArgs.length + (useLauncherDirectory ? 5 : 3)];
 
-            ProcessBuilder processBuilder = new ProcessBuilder("java");
-            processBuilder.command().addAll(Arrays.asList(jvmArgs));
-            processBuilder.command().add("-jar");
-            processBuilder.command().add(filePath);
+            command[0] = "java";
+            System.arraycopy(jvmArgs, 0, command, 1, jvmArgs.length);
+            command[jvmArgs.length + 1] = "-jar";
+            command[jvmArgs.length + 2] = filePath;
+            if (useLauncherDirectory) {
+                command[jvmArgs.length + 3] = "-s";
+                command[jvmArgs.length + 4] = launcherDirectory;
+            }
+
+            ProcessBuilder processBuilder = new ProcessBuilder(command);
 
             processBuilder.redirectErrorStream(true);
             Process process = processBuilder.start();
@@ -79,7 +86,7 @@ public class Main {
                 LauncherGUI.dispose();
             }
 
-            LauncherGUI.updateButton("Launch", true);
+            PlayMenu.updateButton("Launch", true);
 
             process.waitFor();
 

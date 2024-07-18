@@ -3,7 +3,9 @@ package nl.neliz.cosmiclauncher.util;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import nl.neliz.cosmiclauncher.Main;
+import nl.neliz.cosmiclauncher.ui.ProgressBar;
 
+import javax.swing.*;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URL;
@@ -50,7 +52,7 @@ public class VersionHandler {
             String url = "https://github.com/n3liz/Cosmic-Launcher/raw/main/versions.json";
             String filePath = Main.versionsDirectory + File.separator + "versions.json";
 
-            downloadFile(new URL(url), new File(filePath));
+            downloadFile(new URL(url), new File(filePath), false);
 
             File file = new File(filePath);
             FileReader reader = new FileReader(file);
@@ -81,33 +83,48 @@ public class VersionHandler {
         return null;
     }
 
-    public static void downloadFile(String url, String filePath) {
+    public static void downloadFile(String url, String filePath, boolean showProgressBar) {
         try {
-            downloadFile(new URL(url), new File(filePath));
+            downloadFile(new URL(url), new File(filePath), showProgressBar);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void downloadFile(URL url, File filePath) {
+    public static void downloadFile(URL url, File filePath, boolean showProgressBar) {
         try {
             URLConnection connection = url.openConnection();
+            int fileSize = connection.getContentLength();
 
             File parentDir = filePath.getParentFile();
             if (!parentDir.exists()) {
                 parentDir.mkdirs();
             }
 
+            if (showProgressBar) {
+                SwingUtilities.invokeLater(() -> new ProgressBar());
+            }
+
             try (InputStream inputStream = connection.getInputStream();
                  BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath))) {
                 byte[] buffer = new byte[1024];
                 int bytesRead;
+                long totalBytesRead = 0;
                 while ((bytesRead = inputStream.read(buffer)) != -1) {
                     outputStream.write(buffer, 0, bytesRead);
+                    totalBytesRead += bytesRead;
+                    if (showProgressBar) {
+                        int progress = (int) ((totalBytesRead * 100) / fileSize);
+                        SwingUtilities.invokeLater(() -> ProgressBar.updateProgress(progress));
+                    }
                 }
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (showProgressBar) {
+                SwingUtilities.invokeLater(ProgressBar::dispose);
+            }
         }
     }
 }
