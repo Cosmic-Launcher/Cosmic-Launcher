@@ -1,13 +1,16 @@
 package nl.neliz.cosmiclauncher;
 
-import nl.neliz.cosmiclauncher.ui.menu.PlayMenu;
+import com.formdev.flatlaf.FlatLaf;
 import nl.neliz.cosmiclauncher.ui.LauncherGUI;
 import nl.neliz.cosmiclauncher.ui.OutputGUI;
+import nl.neliz.cosmiclauncher.ui.menu.PlayMenu;
+import nl.neliz.cosmiclauncher.util.LanguageManager;
 import nl.neliz.cosmiclauncher.util.OSHelper;
 
 import java.awt.*;
 import java.io.*;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.Date;
 
 import static nl.neliz.cosmiclauncher.Settings.*;
@@ -20,6 +23,8 @@ public class Main {
 
     public static void main(String[] args) {
         Settings.load(launcherDirectory + File.separator + "launcherSettings.json");
+        LanguageManager.loadLanguage(Settings.language);
+        FlatLaf.setGlobalExtraDefaults(Collections.singletonMap("@accentColor", "#32CD32"));
         new LauncherGUI();
     }
 
@@ -86,7 +91,7 @@ public class Main {
                 LauncherGUI.dispose();
             }
 
-            PlayMenu.updateButton("Launch", true);
+            PlayMenu.updateButton(LanguageManager.getTranslation("launcherGui.play.launch"), true);
 
             process.waitFor();
 

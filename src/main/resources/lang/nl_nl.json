@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "name": "Nederlands"
+  },
+  "launcherGui": {
+    "playTab": "Spelen",
+    "play": {
+      "launch": "Starten",
+      "preparing": "Voorbereiden"
+    },
+    "settingsTab": "Instellingen",
+    "settings": {
+      "language": "Taal",
+      "generalSettings": "Algemene instellingen",
+      "outputSettings": "Uitvoerinstellingen",
+      "jvmArguments": "JVM-argumenten",
+      "keepGuiOpen": "Houd GUI open",
+      "showSnapshots": "Toon snapshots",
+      "useLauncherDirectory": "Gebruik launcher-map",
+      "openGameOutput": "Open game-uitvoer",
+      "saveLogs": "Sla logs op"
+    },
+    "aboutTab": "Over",
+    "about": {
+      "author": "Gemaakt door: ",
+      "version": "Versie: ",
+      "website": "Website: ",
+      "openDirectory": "Launcher-map openen"
+    }
+  },
+  "outputGui": {
+    "copyButton": "Log naar klembord kopiëren"
+  },
+  "progressDialog": {
+    "title": "Downloaden..."
+  }
+}

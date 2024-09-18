@@ -1,80 +1,52 @@
 package nl.neliz.cosmiclauncher.ui.menu;
 
 import nl.neliz.cosmiclauncher.Main;
+import nl.neliz.cosmiclauncher.util.FileUtils;
+import nl.neliz.cosmiclauncher.util.LanguageManager;
 import nl.neliz.cosmiclauncher.util.VersionHandler;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 
-public class PlayMenu extends JPanel {
+public class PlayMenu {
     private static JComboBox<String> gameVersionComboBox;
     private static JButton launchButton;
+    private static JPanel panel;
 
     public static JPanel setPanel() {
-        JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(new EmptyBorder(4, 4, 4, 4));
+        panel = new JPanel(new BorderLayout());
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(6, 4, 6, 4);
-        c.gridx = c.gridy = 0;
+        Image image = Toolkit.getDefaultToolkit().getImage(ClassLoader.getSystemClassLoader().getResource("background.png"));
+        ImageIcon imageIcon = new ImageIcon(image);
 
-        addRow(panel, c, "Version",
-                gameVersionComboBox = new JComboBox<>(),
-                createSpacer()
-        );
+        Image scaledImage = imageIcon.getImage().getScaledInstance(-1, 400, Image.SCALE_SMOOTH);
+        imageIcon = new ImageIcon(scaledImage);
 
+        JLabel imageLabel = new JLabel(imageIcon);
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+        panel.add(imageLabel, BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.setOpaque(false);
+
+        gameVersionComboBox = new JComboBox<>();
         gameVersionComboBox.setFocusable(false);
-        for(VersionHandler.GameVersion version : VersionHandler.versions) {
+        for (VersionHandler.GameVersion version : VersionHandler.versions) {
             gameVersionComboBox.addItem(version.getVersion());
         }
 
-        addRow(panel, c, null,
-                launchButton = new JButton("Launch")
-        );
-
+        launchButton = new JButton(LanguageManager.getTranslation("launcherGui.play.launch"));
         launchButton.setFocusable(false);
-        launchButton.addActionListener(e -> {
-            launch();
-        });
+        launchButton.addActionListener(e -> launch());
+
+        bottomPanel.add(gameVersionComboBox);
+        bottomPanel.add(launchButton);
+
+        panel.add(bottomPanel, BorderLayout.SOUTH);
 
         return panel;
-    }
-
-    protected static Component createSpacer() {
-        return Box.createRigidArea(new Dimension(4, 0));
-    }
-
-    protected static void addRow(Container parent, GridBagConstraints c, String label, Component... components) {
-        if (label != null) {
-            c.gridwidth = 1;
-            c.anchor = GridBagConstraints.LINE_END;
-            c.fill = GridBagConstraints.NONE;
-            c.weightx = 0;
-            parent.add(new JLabel(label), c);
-            c.gridx++;
-            c.anchor = GridBagConstraints.LINE_START;
-            c.fill = GridBagConstraints.HORIZONTAL;
-        } else {
-            c.gridwidth = 2;
-            c.anchor = GridBagConstraints.CENTER;
-            c.fill = GridBagConstraints.NONE;
-        }
-
-        c.weightx = 1;
-
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
-
-        for (Component comp : components) {
-            panel.add(comp);
-        }
-
-        parent.add(panel, c);
-
-        c.gridy++;
-        c.gridx = 0;
     }
 
     public static void updateButton(String newText, boolean enabled) {
@@ -84,16 +56,26 @@ public class PlayMenu extends JPanel {
         });
     }
 
+    public static void updateLanguage() {
+        launchButton.setText(LanguageManager.getTranslation("launcherGui.play.launch"));
+
+        panel.revalidate();
+        panel.repaint();
+    }
+
     private static void launch() {
-        updateButton("Preparing", false);
+        updateButton(LanguageManager.getTranslation("launcherGui.play.preparing"), false);
 
         String stringGameVersion = (String) gameVersionComboBox.getSelectedItem();
         VersionHandler.GameVersion gameVersion = VersionHandler.identifyGameVersion(stringGameVersion);
-        if(gameVersion == null) return;
+        if (gameVersion == null) return;
 
         new Thread(() -> {
-            VersionHandler.downloadFile(gameVersion.getUrl(), nl.neliz.cosmiclauncher.Main.versionsDirectory + File.separator + gameVersion.getVersion() + File.separator + "client.jar", true);
-            Main.launch(nl.neliz.cosmiclauncher.Main.versionsDirectory + File.separator + gameVersion.getVersion() + File.separator + "client.jar");
+            String filePath = Main.versionsDirectory + File.separator + gameVersion.getVersion() + File.separator + "client.jar";
+            if (!new File(filePath).exists() || !gameVersion.getHash().equals(FileUtils.getFileHash(filePath))) {
+                FileUtils.downloadFile(gameVersion.getUrl(), filePath, true);
+            }
+            Main.launch(filePath);
         }).start();
     }
 }

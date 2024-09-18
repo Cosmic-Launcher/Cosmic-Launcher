@@ -3,17 +3,14 @@ package nl.neliz.cosmiclauncher.util;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import nl.neliz.cosmiclauncher.Main;
-import nl.neliz.cosmiclauncher.ui.ProgressBar;
+import nl.neliz.cosmiclauncher.Settings;
 
-import javax.swing.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Type;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
-
-import static nl.neliz.cosmiclauncher.Settings.*;
 
 public class VersionHandler {
     public static List<GameVersion> versions = new ArrayList<>();
@@ -27,11 +24,13 @@ public class VersionHandler {
         String version;
         String type;
         String url;
+        String hash;
 
-        public GameVersion(String version, String url) {
+        public GameVersion(String version, String type, String url, String hash) {
             this.version = version;
+            this.type = type;
             this.url = url;
-            VersionHandler.versions.add(this);
+            this.hash = hash;
         }
 
         public String getVersion() {
@@ -45,6 +44,10 @@ public class VersionHandler {
         public String getUrl() {
             return url;
         }
+
+        public String getHash() {
+            return hash;
+        }
     }
 
     public static void loadVersionsFromFile() {
@@ -52,14 +55,14 @@ public class VersionHandler {
             String url = "https://github.com/n3liz/Cosmic-Launcher/raw/main/versions.json";
             String filePath = Main.versionsDirectory + File.separator + "versions.json";
 
-            downloadFile(new URL(url), new File(filePath), false);
+            FileUtils.downloadFile(url, filePath, false);
 
             File file = new File(filePath);
             FileReader reader = new FileReader(file);
             Type listType = new TypeToken<List<GameVersion>>() {}.getType();
             List<GameVersion> allVersions = new Gson().fromJson(reader, listType);
 
-            if (showSnapshots) {
+            if (Settings.showSnapshots) {
                 versions.addAll(allVersions);
             } else {
                 for (GameVersion version : allVersions) {
@@ -81,50 +84,5 @@ public class VersionHandler {
             if (version.equalsIgnoreCase(gameVersion.getVersion())) return gameVersion;
         }
         return null;
-    }
-
-    public static void downloadFile(String url, String filePath, boolean showProgressBar) {
-        try {
-            downloadFile(new URL(url), new File(filePath), showProgressBar);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void downloadFile(URL url, File filePath, boolean showProgressBar) {
-        try {
-            URLConnection connection = url.openConnection();
-            int fileSize = connection.getContentLength();
-
-            File parentDir = filePath.getParentFile();
-            if (!parentDir.exists()) {
-                parentDir.mkdirs();
-            }
-
-            if (showProgressBar) {
-                SwingUtilities.invokeLater(() -> new ProgressBar());
-            }
-
-            try (InputStream inputStream = connection.getInputStream();
-                 BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath))) {
-                byte[] buffer = new byte[1024];
-                int bytesRead;
-                long totalBytesRead = 0;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
-                    totalBytesRead += bytesRead;
-                    if (showProgressBar) {
-                        int progress = (int) ((totalBytesRead * 100) / fileSize);
-                        SwingUtilities.invokeLater(() -> ProgressBar.updateProgress(progress));
-                    }
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (showProgressBar) {
-                SwingUtilities.invokeLater(ProgressBar::dispose);
-            }
-        }
     }
 }

@@ -1,27 +1,26 @@
 package nl.neliz.cosmiclauncher.ui;
 
+import com.formdev.flatlaf.FlatDarkLaf;
 import nl.neliz.cosmiclauncher.Main;
+import nl.neliz.cosmiclauncher.util.LanguageManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 
 public class OutputGUI {
-    private JTextArea textArea;
+    private static JFrame frame;
+    private static JTextArea textArea;
+    private static JButton copyButton;
 
     public OutputGUI() {
         initialize();
     }
 
     private void initialize() {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        FlatDarkLaf.setup();
 
-        JFrame frame = new JFrame();
-
+        frame = new JFrame();
         frame.setTitle("Cosmic Reach game output");
         frame.setIconImage(Main.icon);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -32,7 +31,7 @@ public class OutputGUI {
         textArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(textArea);
 
-        JButton copyButton = new JButton("Copy log to clipboard");
+        copyButton = new JButton(LanguageManager.getTranslation("outputGui.copyButton"));
         copyButton.setFocusable(false);
         copyButton.setPreferredSize(new Dimension(600, 25));
         copyButton.addActionListener(e -> {
@@ -46,10 +45,19 @@ public class OutputGUI {
         frame.setVisible(true);
     }
 
-    public void appendToConsole(String text) {
+    public static void appendToConsole(String text) {
         SwingUtilities.invokeLater(() -> {
             textArea.append(text + "\n");
             textArea.setCaretPosition(textArea.getDocument().getLength());
         });
+    }
+
+    public static void updateLanguage() {
+        if(copyButton != null) {
+            copyButton.setText(LanguageManager.getTranslation("outputGui.copyButton"));
+
+            frame.revalidate();
+            frame.repaint();
+        }
     }
 }

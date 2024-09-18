@@ -1,6 +1,7 @@
 package nl.neliz.cosmiclauncher.ui.menu;
 
 import nl.neliz.cosmiclauncher.Main;
+import nl.neliz.cosmiclauncher.util.LanguageManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,28 +9,37 @@ import java.io.File;
 import java.io.IOException;
 
 public class AboutMenu {
+    private static JLabel authorLabel;
+    private static JLabel versionLabel;
+    private static JLabel websiteLabel;
+    private static JButton openDirectoryButton;
+    private static JPanel panel;
+
     public static JPanel setPanel() {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BorderLayout());
+        panel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = GridBagConstraints.RELATIVE;
+        gbc.anchor = GridBagConstraints.CENTER;
 
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel authorLabel = new JLabel("Made by: Neliz");
-        JLabel versionLabel = new JLabel("Version: 1.2");
-        JLabel websiteLabel = new JLabel("Website: https://cosmic-launcher.github.io/");
+
+        authorLabel = new JLabel(LanguageManager.getTranslation("launcherGui.about.author") + "Neliz");
+        versionLabel = new JLabel(LanguageManager.getTranslation("launcherGui.about.version") + "1.3");
+        websiteLabel = new JLabel(LanguageManager.getTranslation("launcherGui.about.website") + "https://cosmic-launcher.github.io/");
+
         topPanel.add(authorLabel);
         topPanel.add(versionLabel);
         topPanel.add(websiteLabel);
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton openDirectoryButton = new JButton("Open Launcher Directory");
+        openDirectoryButton = new JButton(LanguageManager.getTranslation("launcherGui.about.openDirectory"));
         openDirectoryButton.setFocusable(false);
-        openDirectoryButton.addActionListener(e -> {
-            openLauncherDirectory();
-        });
+        openDirectoryButton.addActionListener(e -> openLauncherDirectory());
         bottomPanel.add(openDirectoryButton);
 
-        panel.add(topPanel, BorderLayout.NORTH);
-        panel.add(bottomPanel, BorderLayout.CENTER);
+        panel.add(topPanel, gbc);
+        panel.add(bottomPanel, gbc);
 
         return panel;
     }
@@ -42,5 +52,15 @@ public class AboutMenu {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static void updateLanguage() {
+        authorLabel.setText(LanguageManager.getTranslation("launcherGui.about.author") + "Neliz");
+        versionLabel.setText(LanguageManager.getTranslation("launcherGui.about.version") + "1.3");
+        websiteLabel.setText(LanguageManager.getTranslation("launcherGui.about.website") + "https://cosmic-launcher.github.io/");
+        openDirectoryButton.setText(LanguageManager.getTranslation("launcherGui.about.openDirectory"));
+
+        panel.revalidate();
+        panel.repaint();
     }
 }

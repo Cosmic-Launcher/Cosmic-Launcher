@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "name": "English"
+  },
+  "launcherGui": {
+    "playTab": "Play",
+    "play": {
+      "launch": "Launch",
+      "preparing": "Preparing"
+    },
+    "settingsTab": "Settings",
+    "settings": {
+      "language": "Language",
+      "generalSettings": "General Settings",
+      "outputSettings": "Output Settings",
+      "jvmArguments": "JVM Arguments",
+      "keepGuiOpen": "Keep GUI open",
+      "showSnapshots": "Show snapshots",
+      "useLauncherDirectory": "Use launcher directory",
+      "openGameOutput": "Open game output",
+      "saveLogs": "Save logs"
+    },
+    "aboutTab": "About",
+    "about": {
+      "author": "Made by: ",
+      "version": "Version: ",
+      "website": "Website: ",
+      "openDirectory": "Open Launcher Directory"
+    }
+  },
+  "outputGui": {
+    "copyButton": "Copy log to clipboard"
+  },
+  "progressDialog": {
+    "title": "Downloading..."
+  }
+}

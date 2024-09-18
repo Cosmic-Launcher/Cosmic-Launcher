@@ -12,6 +12,7 @@ import java.io.IOException;
 
 public class Settings {
     static JsonObject jsonObject;
+    public static String language = "en_us";
     public static String jvmArguments = "-Xms512M -Xmx2G";
     public static boolean keepGuiOpen = true;
     public static boolean openGameOutput = true;
@@ -39,6 +40,9 @@ public class Settings {
                 jsonObject = parser.parse(new FileReader(filePath)).getAsJsonObject();
             }
 
+            if (!jsonObject.has("language")) {
+                jsonObject.addProperty("language", language);
+            }
             if (!jsonObject.has("jvmArguments")) {
                 jsonObject.addProperty("jvmArguments", jvmArguments);
             }
@@ -63,6 +67,7 @@ public class Settings {
                 fileWriter.write(gson.toJson(jsonObject));
             }
 
+            language = jsonObject.get("language").getAsString();
             jvmArguments = jsonObject.get("jvmArguments").getAsString();
             keepGuiOpen = jsonObject.get("keepGuiOpen").getAsBoolean();
             openGameOutput = jsonObject.get("openGameOutput").getAsBoolean();
@@ -94,6 +99,9 @@ public class Settings {
             }
 
             switch (key) {
+                case "language":
+                    language = jsonObject.get("language").getAsString();
+                    break;
                 case "jvmArguments":
                     jvmArguments = jsonObject.get("jvmArguments").getAsString();
                     break;
