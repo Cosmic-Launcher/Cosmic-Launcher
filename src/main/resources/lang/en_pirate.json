@@ -6,7 +6,7 @@
     "playTab": "Sail",
     "play": {
       "launch": "Set Sail!",
-      "preparing": "Building Ship.."
+      "preparing": "Building Ship..."
     },
     "settingsTab": "Cogs",
     "settings": {
@@ -25,13 +25,13 @@
       "author": "Captain: ",
       "version": "Dock built: ",
       "website": "Ship manual: ",
-      "openDirectory": "Open dock storage"
+      "openDirectory": "Open Dock Storage"
     }
   },
   "outputGui": {
     "copyButton": "Write what is happening to clipboard"
   },
   "progressDialog": {
-    "title": "Building ship.."
+    "title": "Building ship..."
   }
 }
