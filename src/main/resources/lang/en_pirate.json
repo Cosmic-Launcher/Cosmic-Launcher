@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "name": "Pirate English"
+  },
+  "launcherGui": {
+    "playTab": "Sail",
+    "play": {
+      "launch": "Set Sail!",
+      "preparing": "Building Ship..."
+    },
+    "settingsTab": "Cogs",
+    "settings": {
+      "language": "Lingo",
+      "generalSettings": "Simple Cogs",
+      "outputSettings": "What is Happening Cogs",
+      "jvmArguments": "JVM Arguments",
+      "keepGuiOpen": "Keep docks visible",
+      "showSnapshots": "Keep unbuilt ships visible",
+      "useLauncherDirectory": "Use docks for storage",
+      "openGameOutput": "Keep what is happening visible",
+      "saveLogs": "Write down what is happening"
+    },
+    "aboutTab": "Crew",
+    "about": {
+      "author": "Captain: ",
+      "version": "Dock built: ",
+      "website": "Ship manual: ",
+      "openDirectory": "Open Dock Storage"
+    }
+  },
+  "outputGui": {
+    "copyButton": "Write what is happening to clipboard"
+  },
+  "progressDialog": {
+    "title": "Building ship..."
+  }
+}
